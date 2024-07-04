@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mc.skyverse.nbtrepo.gui.ItemCard;
-import mc.skyverse.nbtrepo.gui.RepoListWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
@@ -12,6 +11,8 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
@@ -34,7 +35,6 @@ public class RepoScreen extends Screen {
 	protected String searchFor = "";
 	
 	private ItemCardContainer container;
-	public RepoListWidget scroll;
 
 	@Override
 	protected void init() {
@@ -42,22 +42,16 @@ public class RepoScreen extends Screen {
 		serverUrl = new TextFieldWidget(textRenderer, width / 2 - 125, 30, 250, 20, Text.literal(""));
 		serverUrl.setMaxLength(256);
 		serverUrl.setPlaceholder(Text.literal("Server URL or IP"));
-
-		//scroll = new RepoListWidget(this, MinecraftClient.getInstance(), 600, 100, 80, 30, null);
-		serverUrl.setChangedListener(s -> scroll.setServer(s));
 		
 		search = new TextFieldWidget(textRenderer, width / 2 - 100, 55, 200, 20, search, Text.literal(""));
-		//search.setChangedListener(s -> scroll.setSearch(s));
 		search.setMaxLength(100);
 		search.setPlaceholder(Text.literal("§oSearch for NBT..."));
 
 
 		container = new ItemCardContainer();
-
-//		item = new ItemCard(width / 2 - 100, 7, 175, 125, Text.literal("Item"));
 		
-		container.addItem(new ItemCard(Text.literal("Item")));
-		container.addItem(new ItemCard(Text.literal("Item 2")));
+		container.addItem(new ItemCard(new ItemStack(Items.GOLDEN_SWORD, 1), Text.literal("Sword")));
+		container.addItem(new ItemCard(new ItemStack(Items.DIAMOND_SWORD, 1), Text.literal("Another one")));
 		
 		addSelectableChild(serverUrl);
 		addSelectableChild(search);
@@ -99,8 +93,8 @@ public class RepoScreen extends Screen {
 	
 	public class ItemCardContainer {
 		
-		int originalX = 0;//dunno;
-		int originalY = 125;//dunno;
+		int originalX = 0;
+		int originalY = 125;
 				
 		int padding = 25;
 		int cardWidth = 85;
@@ -113,17 +107,17 @@ public class RepoScreen extends Screen {
 			cards.add(itemcard);
 			itemcard.init(getCoordinates(), cardWidth, cardHeight);
 			
-			System.out.println(width + "x" + height);
+//			System.out.println(width + "x" + height);
 		}
 		
 		private int[] getCoordinates() {
 			
-			int x = originalX + padding + (cards.size() < 2 ? 0 : (width % ((cardWidth + padding) * (cards.size() - 1))));
+			int x = originalX + padding + (cards.size() < 2 ? 0 : padding + (width % ((cardWidth + padding) * (cards.size() - 1))));
 			int y = originalY + (cards.size() < 2 ? 0 : (cardHeight + padding) * (int)(cards.size() * (cardWidth + padding) / width));
 				
 			System.out.println((int)(cards.size() * (cardWidth + padding) / width));
 			
-			System.out.println(x + ";" + y);
+//			System.out.println(x + ";" + y);
 			return new int[] {x, y};
 		}
 		

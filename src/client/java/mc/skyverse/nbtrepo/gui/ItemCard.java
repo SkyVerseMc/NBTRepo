@@ -1,7 +1,5 @@
 package mc.skyverse.nbtrepo.gui;
 
-import java.awt.Color;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MinecraftClient;
@@ -10,16 +8,18 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.input.KeyCodes;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 public class ItemCard extends PressableWidget {
 	
 	private boolean initialized = false;
+	private ItemStack stack;
 	
-    public ItemCard(Text text) {
+    public ItemCard(ItemStack stack, Text text) {
     	
 		super(0, 0, 0, 0, text);
+		this.stack = stack;
 	}
     
     public void init(int[] coordinates, int width, int height) {
@@ -50,7 +50,9 @@ public class ItemCard extends PressableWidget {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         
-        context.fill(RenderLayer.getGui(), getX(), getY(), getX() + getWidth(), getY() + getHeight(), new Color(140, 101, 69).getRGB());
+        RenderHelper.drawDirtBackgroundWithBrightness(context, 0.9F, getX(), getY(), getWidth(), getHeight());
+        
+        RenderHelper.drawItemWithScale(context, stack, getX() + 35, getY() + 25, 3);
     }
 
     @Override
