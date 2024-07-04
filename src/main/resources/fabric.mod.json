@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "nbtrepo",
+	"version": "${version}",
+	"name": "NBTRepo",
+	"description": "This mod allows you to download and upload nbt",
+	"authors": [
+		"SkyVerseMc"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/SkyVerseMc/NBT-Repo"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/nbtrepo/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"mc.skyverse.nbtrepo.NBTRepoMod"
+		],
+		"client": [
+			"mc.skyverse.nbtrepo.NBTRepoModClient"
+		]
+	},
+	"mixins": [
+		"nbtrepo.mixins.json",
+		{
+			"config": "nbtrepo.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
