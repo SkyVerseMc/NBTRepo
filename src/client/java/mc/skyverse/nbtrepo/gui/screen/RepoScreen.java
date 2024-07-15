@@ -50,13 +50,14 @@ public class RepoScreen extends Screen {
 
 		container = new ItemCardContainer();
 		
-		container.addItem(new ItemCard(new ItemStack(Items.GOLDEN_SWORD, 1), Text.literal("Sword")));
-		container.addItem(new ItemCard(new ItemStack(Items.DIAMOND_SWORD, 1), Text.literal("Another one")));
+		// Test items
+		container.addItem(new ItemCard(new ItemStack(Items.GOLDEN_SWORD, 1), "Sword"));
+		container.addItem(new ItemCard(new ItemStack(Items.DIAMOND_SWORD, 1), "§oLorem ipsum dolor sit amet, consectetur adipiscing elit."));
 		
 		addSelectableChild(serverUrl);
 		addSelectableChild(search);
 		//addSelectableChild(scroll);
-		setInitialFocus((Element)search);
+		//setInitialFocus((Element)search);
 	}
 
 	public void close() {
@@ -98,7 +99,7 @@ public class RepoScreen extends Screen {
 				
 		int padding = 25;
 		int cardWidth = 85;
-		int cardHeight = 115;
+		int cardHeight = 135;
 		
 		List<ItemCard> cards = new ArrayList<ItemCard>();
 		

@@ -1,5 +1,7 @@
 package mc.skyverse.nbtrepo.gui;
 
+import java.awt.Color;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MinecraftClient;
@@ -14,12 +16,16 @@ import net.minecraft.text.Text;
 public class ItemCard extends PressableWidget {
 	
 	private boolean initialized = false;
-	private ItemStack stack;
+	private TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 	
-    public ItemCard(ItemStack stack, Text text) {
+	private final ItemStack stack;
+	private final String title;
+	
+    public ItemCard(ItemStack stack, String title) {
     	
-		super(0, 0, 0, 0, text);
+		super(0, 0, 0, 0, Text.literal(""));
 		this.stack = stack;
+		this.title = title;
 	}
     
     public void init(int[] coordinates, int width, int height) {
@@ -50,9 +56,37 @@ public class ItemCard extends PressableWidget {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         
-        RenderHelper.drawDirtBackgroundWithBrightness(context, 0.9F, getX(), getY(), getWidth(), getHeight());
+        RenderHelper.drawDirtBackgroundWithBrightness(context, 0.65F, getX(), getY(), getWidth(), getHeight());
+        RenderHelper.drawDirtBackgroundWithBrightness(context, 0.3F, getX() + 5, getY() + 5, getWidth() - 5 * 2, 58);
         
-        RenderHelper.drawItemWithScale(context, stack, getX() + 35, getY() + 25, 3);
+        RenderHelper.drawItemWithScale(context, stack, getX() + 34, getY() + 30, 3);
+        
+        context.drawCenteredTextWithShadow(textRenderer, getTitle(0), getX() + (int)(0.5 * getWidth()), getY() + 70, Color.WHITE.getRGB());
+        context.drawCenteredTextWithShadow(textRenderer, getTitle(1), getX() + (int)(0.5 * getWidth()), getY() + 70 + textRenderer.fontHeight + 2, Color.WHITE.getRGB());
+    }
+    
+    private String getTitle(int line) {
+    	
+    	if (textRenderer.getWidth(title) < getWidth()) return title;
+    
+    	String[] words = title.split("[^a-zA-Z0-9§]");
+    	
+    	if (words.length < 2) return line > 0 ? "" : title;
+    	
+    	String[] text = new String[] {"", ""};
+    	int i = 0;
+    	String last = "";
+    	
+    	for (String s : words) {
+    		
+    		if (s.contains("§")) last = "§" + s.charAt(s.lastIndexOf('§') + 1);
+    		if (textRenderer.getWidth(text[i]) + textRenderer.getWidth(s + " ") > getWidth() - 10) i++;
+    		
+    		if (i > 1) break;
+    		text[i] += (i > 0 ? last : "") + s + " ";
+    	}
+    	
+    	return line > i ? "" : text[line];
     }
 
     @Override

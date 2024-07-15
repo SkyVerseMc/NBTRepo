@@ -32,6 +32,7 @@ public class RenderHelper {
         
         context.getMatrices().push();
         context.getMatrices().translate(x + 8, y + 8, 150);
+        
         try {
         	
             context.getMatrices().multiplyPositionMatrix(new Matrix4f().scaling(1.0f, -1.0f, 1.0f));
