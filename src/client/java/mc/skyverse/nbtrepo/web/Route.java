@@ -1,6 +1,6 @@
 package mc.skyverse.nbtrepo.web;
 
-public class WEB {
+public class Route {
 
 	public static final String PING_SERVER = "/ping";
 	public static final String SEARCH = "/search?nbt=";

@@ -31,7 +31,7 @@ public class RenderHelper {
         BakedModel bakedModel = mc.getItemRenderer().getModel(stack, null, null, 0);
         
         context.getMatrices().push();
-        context.getMatrices().translate(x + 8, y + 8, 150);
+        context.getMatrices().translate(x + 8, y + 8, 25);
         
         try {
         	
