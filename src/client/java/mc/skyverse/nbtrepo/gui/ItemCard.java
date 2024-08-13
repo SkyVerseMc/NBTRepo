@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import mc.skyverse.nbtrepo.gui.screen.RepoScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -17,18 +18,20 @@ public class ItemCard extends PressableWidget {
 
 	private boolean initialized = false;
 	private TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+	private RepoScreen screen;
 
 	private final ItemStack stack;
 	private final String title;
 
 	int renderY;
 
-	public ItemCard(ItemStack stack, String title) {
+	public ItemCard(RepoScreen screen, ItemStack stack, String title) {
 
 		super(0, 0, 0, 0, Text.literal(""));
 
 		this.stack = stack;
 		this.title = title;
+		this.screen = screen;
 	}
 
 	public void init(int[] coordinates, int width, int height) {
@@ -97,26 +100,23 @@ public class ItemCard extends PressableWidget {
 	}
 
 	@Override
-	public void onClick(double mouseX, double mouseY) {
-
-		if (mouseX >= 125) this.onPress();
-	}
+	public void onClick(double mouseX, double mouseY) {}
 
 	public boolean isHovered(int mouseX, int mouseY) {
 
-		return mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY >= renderY && mouseY <= renderY + getHeight();
+		return screen.focusFree() && mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY >= renderY && mouseY <= renderY + getHeight();
 	}
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 
-		if (!initialized || !this.active || !this.visible) {
-			return false;
-		}
+		if (!initialized || !this.active || !this.visible) return false;
+
 		if (KeyCodes.isToggle(keyCode)) {
 
 			this.playDownSound(MinecraftClient.getInstance().getSoundManager());
 			this.onPress();
+
 			return true;
 		}
 		return false;

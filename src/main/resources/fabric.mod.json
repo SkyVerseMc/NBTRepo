@@ -23,7 +23,6 @@
 		]
 	},
 	"mixins": [
-		"nbtrepo.mixins.json",
 		{
 			"config": "nbtrepo.client.mixins.json",
 			"environment": "client"

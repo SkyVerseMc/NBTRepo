@@ -32,7 +32,7 @@ public class NBTRepoModClient implements ClientModInitializer {
 		
 		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			"key.nbtrepo.open",
-			    InputUtil.Type.KEYSYM, // KEYSYM (keyboard) , MOUSE (mouse).
+			InputUtil.Type.KEYSYM, // KEYSYM (keyboard) , MOUSE (mouse).
 			GLFW.GLFW_KEY_M,
 			"category.nbtrepo"
 		));
@@ -49,7 +49,7 @@ public class NBTRepoModClient implements ClientModInitializer {
 					}
 
 				});
-				this.mc.setScreen(new RepoScreen(this.mc.currentScreen));
+				this.mc.setScreen(new RepoScreen(this.mc));
 		    }
 		});
 	}

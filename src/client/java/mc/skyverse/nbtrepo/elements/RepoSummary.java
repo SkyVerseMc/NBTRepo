@@ -1,4 +1,4 @@
-package mc.skyverse.nbtrepo.gui;
+package mc.skyverse.nbtrepo.elements;
 
 import java.util.Date;
 

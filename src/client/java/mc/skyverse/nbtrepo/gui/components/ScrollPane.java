@@ -1,4 +1,4 @@
-package mc.skyverse.nbtrepo.gui.screen;
+package mc.skyverse.nbtrepo.gui.components;
 
 import java.util.List;
 

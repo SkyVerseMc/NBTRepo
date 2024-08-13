@@ -1,11 +1,12 @@
 package mc.skyverse.nbtrepo.gui.screen;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import mc.skyverse.nbtrepo.gui.ItemCard;
+import mc.skyverse.nbtrepo.gui.ItemCardContainer;
 import mc.skyverse.nbtrepo.gui.RenderHelper;
+import mc.skyverse.nbtrepo.gui.components.ScrollPane;
+import mc.skyverse.nbtrepo.gui.components.SearchField;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -20,54 +21,53 @@ import net.minecraft.text.Text;
 @Environment(EnvType.CLIENT)
 public class RepoScreen extends Screen {
 
+	private MinecraftClient mc;
 	private Screen parent;
-
-	public RepoScreen(Screen parent) {
-
-		super(Text.literal("NBT Repo"));
-		this.parent = parent;
-	}
-
-	/* later
-	public ButtonWidget button1;
-	public ButtonWidget button2;
-	 */
-
 	protected TextFieldWidget serverIP;
-	protected TextFieldWidget search;
+	protected SearchField search;
+	private ItemCardContainer container;
+	private ScrollPane scrollPane;
 
 	protected String searchQuery = "";
 
-	private ItemCardContainer container;
-	private ScrollPane scrollPane;
+
+	public RepoScreen(MinecraftClient mc) {
+
+		super(Text.literal("NBT Repo"));
+		this.mc = mc;
+		parent = mc.currentScreen;
+	}
 
 	@Override
 	protected void init() {
 
-		/* Not working idk why */
 		serverIP = new TextFieldWidget(textRenderer, width / 2 - 125, 30, 250, 20, serverIP, Text.literal(""));
 		serverIP.setMaxLength(256);
 		serverIP.setPlaceholder(Text.literal("Server URL or IP"));
 		addSelectableChild(serverIP);
 
-		search = new TextFieldWidget(textRenderer, width / 2 - 100, 55, 200, 20, search, Text.literal(""));
-		search.setMaxLength(100);
+		search = new SearchField(textRenderer, width / 2 - 100, 60, 200, 20, search, Text.literal(""));
+		search.setMaxLength(23);
 		search.setPlaceholder(Text.literal("§oSearch for NBT..."));
+
+		search.setSearchParams("Name", "Version", "Item", "ID", "Author");
+
 		addSelectableChild(search);
 
-		container = new ItemCardContainer();
+		int h = 95;
+		container = new ItemCardContainer(width, h);
 
 		/* Random items for now */
-		ItemStack stack = MinecraftClient.getInstance().player.getMainHandStack();
-		container.addItem(new ItemCard(stack, stack.getName().getString()));
+		ItemStack stack = mc.player.getMainHandStack();
+		container.addItem(new ItemCard(this, stack, stack.getName().getString()));
 
-		for (int i = 0; i < 40; i++) {
+		for (int i = 0; i < 39; i++) {
 
 			ItemStack st = new ItemStack(getRandom());
-			container.addItem(new ItemCard(st, st.getName().getString()));
+			container.addItem(new ItemCard(this, st, st.getName().getString()));
 		}
 
-		scrollPane = new ScrollPane(width, height - 120, 120, container.getHeight() + 5);
+		scrollPane = new ScrollPane(width, height - h, h, container.getHeight());
 	}
 
 	public Item getRandom() {
@@ -77,29 +77,6 @@ public class RepoScreen extends Screen {
 
 		return Registries.ITEM.get(i);
 	}
-
-	public void close() {
-
-		this.client.setScreen(this.parent);
-	}
-
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-
-		//serverIP.setFocused(serverIP.isHovered());
-		//search.setFocused(search.isHovered());
-
-		System.out.println(mouseX + "," + mouseY);
-		return true;
-	}
-
-	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-
-		this.scrollPane.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-		return true;
-	}
-
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -111,58 +88,86 @@ public class RepoScreen extends Screen {
 
 		context.getMatrices().translate(0, 0, 69);
 
-		RenderHelper.drawDirtBackgroundWithBrightness(context,  0.25F, 0, 0, width, 125);
-		context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 16777215);
+		RenderHelper.drawDirtBackgroundWithBrightness(context,  0.25F, 0, 0, width, 95);
+		context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 8, 16777215);
 
-		this.serverIP.render(context, mouseX, mouseY, delta);
-		this.search.render(context, mouseX, mouseY, delta);
+		serverIP.render(context, mouseX, mouseY, delta);
+		search.render(context, mouseX, mouseY, delta);;
 
-		scrollPane.renderWidget(context, mouseX, mouseY, delta);
+		scrollPane.render(context, mouseX, mouseY, delta);
 
 		context.drawBorder(width / 2 - 100, 7, 100, 100, 16777215);
 	}
 
-	public class ItemCardContainer {
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
-		int originX = -55;
-		int originY = 125;
+		setFocused(null);
 
-		int padding = 25;
-		int cardWidth = 85;
-		int cardHeight = 135;
+		if (serverIP.isHovered()) {
 
-		int w = cardWidth + padding;
-		int h = cardHeight + padding;
+			setFocused(serverIP);
 
-		int qw = width / w;
+			if (serverIP.getText() == "") serverIP.setText("http://");
 
-		List<ItemCard> cards = new ArrayList<ItemCard>();
+		} else {
 
-		public void addItem(ItemCard itemcard) {
-
-			itemcard.init(getCoordinates(), cardWidth, cardHeight);
-			cards.add(itemcard);
+			if (serverIP.getText().equals("http://")) serverIP.setText("");
 		}
 
-		public int getHeight() {
+		if (search.isHovered()) {
 
-			return h * (cards.size() / qw);
+			setFocused(search);
+			search.onClick(mouseX, mouseY);
+			
+		} else {
+
+			search.unfocus();
 		}
+		
+		return true;
+	}
 
-		private int[] getCoordinates() {
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 
-			int x = originX + w * ((cards.size() % qw) + 1);
-			int y = originY + h * (cards.size() / qw);
+		this.scrollPane.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+		return true;
+	}
 
-			return new int[] {x, y};
-		}
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 
-		private void renderAll(int scroll, DrawContext context, int mouseX, int mouseY, float delta) {
+		if (keyCode == 256) {
 
-			for (ItemCard card : cards) {
-
-				card.renderF(scroll, context, mouseX, mouseY, delta);
+			if (focusFree()) {
+				
+				close();
+				
+			} else if (search.isFocused()) {
+				
+				search.keyPressed(keyCode, scanCode, modifiers);	
 			}
+			return true;
 		}
+		
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public void close() {
+
+		this.client.setScreen(parent);
+	}
+	
+	@Override
+	public boolean shouldCloseOnEsc() {
+
+		return false;
+	}
+
+	public boolean focusFree() {
+
+		return !serverIP.isFocused() && !search.isFocused();
 	}
 }
