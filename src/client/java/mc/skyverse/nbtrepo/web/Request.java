@@ -106,4 +106,11 @@ public class Request {
 //		return true;
 		return this.url != null && this.headers != null && (this.payload != null && this.method.needPayload);
 	}
+	
+	public static boolean validIP(String ipOrUrl) {
+		
+		String ip = ipOrUrl.replace("http://", "").replace("https://", "");
+		
+		return ip.contains(".") && !ip.endsWith(".") && ip.length() > 2;
+	}
 }

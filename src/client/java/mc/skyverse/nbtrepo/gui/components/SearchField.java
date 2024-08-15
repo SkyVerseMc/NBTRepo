@@ -22,13 +22,12 @@ public class SearchField extends TextFieldWidget {
 	private TextRenderer textRenderer;
 	private LinkedHashMap<String, String> queryParams = new LinkedHashMap<String, String>(); 
 
-	private int editableColor = 0xE0E0E0;
-	private int uneditableColor = 0x707070;
-
 	private int selectedRow = 0;
+
 	private boolean hovered = false;
 	private boolean hideFilters = true;
 	private boolean navKey = false;
+
 
 	public SearchField(TextRenderer textRenderer, int width, int height, Text text) {
 
@@ -46,7 +45,7 @@ public class SearchField extends TextFieldWidget {
 
 		this.textRenderer = textRenderer;
 
-		if (copyFrom != null) this.setText(copyFrom.getText());
+		if (copyFrom != null) setText(copyFrom.getText());
 	}
 
 	public void setSearchParams(String... params) {
@@ -75,7 +74,7 @@ public class SearchField extends TextFieldWidget {
 
 		super.renderWidget(context, mouseX, mouseY, delta);
 
-		this.hovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight() * (isFocused() ? queryParams.size() + 1 : 1);
+		hovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight() * (isFocused() ? queryParams.size() + 1 : 1);
 
 		if (!isFocused() || filtersHidden()) return;
 
@@ -84,7 +83,7 @@ public class SearchField extends TextFieldWidget {
 		int i = 0;
 		for (Map.Entry<String, String> param : queryParams.entrySet()) {
 
-			context.drawTextWithShadow(this.textRenderer, param.equals(getSelectedEntry()) ? "§r§l" + param.getKey() + ": §r§7" + (getText().length() > param.getValue().length() ? getText() : param.getValue()) : "§r§7" + param.getKey() + ": " + param.getValue(), getX() + 4, getY() + getHeight() + 6 + (this.textRenderer.fontHeight + 1) * 2 * i, this.editableColor);
+			context.drawTextWithShadow(textRenderer, param.equals(getSelectedEntry()) ? "§r§l" + param.getKey() + ": §r§7" + (getText().length() > param.getValue().length() ? getText() : param.getValue()) : "§r§7" + param.getKey() + ": " + param.getValue(), getX() + 4, getY() + getHeight() + 6 + (textRenderer.fontHeight + 1) * 2 * i, 0xE0E0E0);
 			i++;
 		}
 	}
@@ -112,7 +111,7 @@ public class SearchField extends TextFieldWidget {
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 
-		if (!this.isNarratable() || !this.isFocused()) return false;
+		if (!isNarratable() || !isFocused()) return false;
 
 		int l = queryParams.keySet().size();
 
@@ -151,17 +150,17 @@ public class SearchField extends TextFieldWidget {
 		navKey = true;
 		return true;
 	}
-	
+
 	public void saveParam() {
-		
+
 		if (selectedRow == 0) return;
-		
+
 		queryParams.put(getSelectedEntry().getKey(), getText());
 		setText("");
 	}
-	
+
 	public Map.Entry<String, String> getSelectedEntry() {
-		
+
 		int i = 1;
 		for (Map.Entry<String, String> param : queryParams.entrySet()) {
 
@@ -180,7 +179,7 @@ public class SearchField extends TextFieldWidget {
 	@Override
 	public boolean charTyped(char chr, int modifiers) {
 
-		if (!this.isActive() || isInvalid(chr)) return false;
+		if (!isActive() || isInvalid(chr)) return false;
 
 		return super.charTyped(chr, modifiers);
 	}
@@ -200,4 +199,3 @@ public class SearchField extends TextFieldWidget {
 		return "?=&".indexOf(c) > -1;
 	}
 }
-

@@ -2,11 +2,13 @@ package mc.skyverse.nbtrepo;
 
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mojang.logging.LogUtils;
 
 import mc.skyverse.nbtrepo.elements.Version;
 import mc.skyverse.nbtrepo.gui.screen.RepoScreen;
+import mc.skyverse.nbtrepo.util.ModResourceManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -17,11 +19,13 @@ import net.minecraft.nbt.NbtHelper;
 
 public class NBTRepoModClient implements ClientModInitializer {
 	
-	public final Version MC_VERSION = new Version("1.20.4");
+	public static final Version MC_VERSION = new Version("1.20.4");
+	public static final Logger LOGGER = LoggerFactory.getLogger("nbtrepo");
 	
 	private static NBTRepoModClient instance;
 	private static KeyBinding keyBinding;
 	private MinecraftClient mc;
+	private boolean texturesLoaded = false;
 	
 	@Override
 	public void onInitializeClient() {
@@ -39,19 +43,27 @@ public class NBTRepoModClient implements ClientModInitializer {
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			
+			loadResources();
 			while (keyBinding.wasPressed()) {
 			
-				this.mc.player.getHandItems().forEach((e) -> {
+				mc.player.getHandItems().forEach((e) -> {
 
 					if (e.getNbt() != null) {
 
-						this.mc.player.sendMessage(NbtHelper.toPrettyPrintedText(e.getNbt()));
+						mc.player.sendMessage(NbtHelper.toPrettyPrintedText(e.getNbt()));
 					}
-
 				});
-				this.mc.setScreen(new RepoScreen(this.mc));
+				mc.setScreen(new RepoScreen(mc));
 		    }
 		});
+	}
+	
+	private void loadResources() {
+		
+		if (texturesLoaded) return;
+
+		ModResourceManager.load(mc);
+		texturesLoaded = true;
 	}
 	
 	public NBTRepoModClient getInstance() {

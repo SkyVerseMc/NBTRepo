@@ -3,7 +3,7 @@
 	"id": "nbtrepo",
 	"version": "${version}",
 	"name": "NBTRepo",
-	"description": "This mod allows you to download and upload nbt",
+	"description": "This mod allows you to download nbt from servers, edit them, sort them, export them.",
 	"authors": [
 		"SkyVerseMc"
 	],
