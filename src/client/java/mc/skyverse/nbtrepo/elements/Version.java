@@ -21,7 +21,7 @@ public class Version {
 	
 	public boolean isInRange(Version version) {
 		
-		String[] v = this.get().split("-");
+		String[] v = (this.get() + (this.get().contains("-") ? "" : "-" + this.get())).split("-");
 		
 		String min = build(v[0]);
 		String max = build(v[1]);

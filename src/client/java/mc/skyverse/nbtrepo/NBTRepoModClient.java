@@ -8,7 +8,7 @@ import com.mojang.logging.LogUtils;
 
 import mc.skyverse.nbtrepo.elements.Version;
 import mc.skyverse.nbtrepo.gui.screen.RepoScreen;
-import mc.skyverse.nbtrepo.util.ModResourceManager;
+import mc.skyverse.nbtrepo.util.resource.ModResourceManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;

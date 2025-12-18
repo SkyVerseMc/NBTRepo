@@ -1,7 +1,15 @@
 package mc.skyverse.nbtrepo.gui.screen;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Date;
 import java.util.Random;
 
+import com.google.gson.Gson;
+
+import mc.skyverse.nbtrepo.elements.ItemInfo;
+import mc.skyverse.nbtrepo.elements.Version;
 import mc.skyverse.nbtrepo.gui.ItemCard;
 import mc.skyverse.nbtrepo.gui.ItemCardContainer;
 import mc.skyverse.nbtrepo.gui.RenderHelper;
@@ -10,6 +18,7 @@ import mc.skyverse.nbtrepo.gui.components.Listener;
 import mc.skyverse.nbtrepo.gui.components.ScrollPane;
 import mc.skyverse.nbtrepo.gui.components.SearchField;
 import mc.skyverse.nbtrepo.gui.components.TextField;
+import mc.skyverse.nbtrepo.util.resource.ItemUtil;
 import mc.skyverse.nbtrepo.web.Request;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,7 +27,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 
@@ -88,18 +96,60 @@ public class RepoScreen extends Screen {
 
 		int h = 95;
 		container = new ItemCardContainer(width, h);
+		
+//		ItemStack stack = mc.player.getMainHandStack();
+//		container.addItem(new ItemCard(this, stack, stack.getName().getString()));
 
 		/* Random items for now */
-		ItemStack stack = mc.player.getMainHandStack();
-		container.addItem(new ItemCard(this, stack, stack.getName().getString()));
-
-		for (int i = 0; i < 39; i++) {
-
-			ItemStack st = new ItemStack(getRandom());
-			container.addItem(new ItemCard(this, st, st.getName().getString()));
-		}
+		
+		ItemInfo info1 = new ItemInfo("0", "golden_sword", "Test Item", new Version("1.20.1"), "This is just a basic sword lul", "ABCDEFGHIJKLMNOP", 69, System.currentTimeMillis());
+		
+		Gson gson = new Gson();
+		try (Writer writer = new FileWriter("iteminfo.json")) {
+	        gson.toJson(info1, writer);
+	    } catch (IOException e) {
+	        throw new RuntimeException(e);
+	    }
+		
+		
+		container.addItem(new ItemCard(this, info1));
+//		for (int i = 0; i < 39; i++) {
+//
+//			ItemStack st = new ItemStack(getRandom());
+//			container.addItem(new ItemCard(this, st, st.getName().getString()));
+//		}
 
 		scrollPane = new ScrollPane(width, height - h, h, container.getHeight());
+	}
+	
+	public void refresh() {
+//		
+//		String response = "{id=\"ce681c80-d1ed-4dd2-83e2-c996243ba0ff\",name=\"Big sword\",item=\"minecraft:golden_sword\",version=1.2*.*,author=\"sky\",dl_count=1203,date=\"1203981123\",nbt={Damage: 0, Enchantments: [{lvl: 1s, id: \\\"minecraft:sharpness\\\"}]}}";
+//		
+//		ItemInfo info = new ItemInfo("ce681c80-d1ed-4dd2-83e2-c996243ba0ff", new ItemStack(Items.GOLDEN_SWORD), "Big Sword", new Version("1.2*.2"), "sky", 69, new Date().toInstant().toEpochMilli());
+//		
+//		Gson gson = new Gson();
+//		try (Writer writer = new FileWriter("iteminfo.json")) {
+//	        gson.toJson(info, writer);
+//	    } catch (IOException e) {
+//	        throw new RuntimeException(e);
+//	    }
+		
+//		ItemInfo info = new Gson().fromJson(response, ItemInfo.class);
+//		try {
+//			
+////			ItemInfo info = new ItemInfo(JsonHelper.getString(null, response), null, response, null, response, height, null)
+//			
+//			NbtCompound nbt = NbtHelper.fromNbtProviderString("");
+//			ItemStack stack = new ItemStack(Item.byRawId(), 1);
+//			stack.setNbt(nbt);
+//			container.addItem(new ItemCard(stack, stack.getName().getString()));
+//			MinecraftClient.getInstance().player.getMainHandStack().setNbt(nbt);
+//			
+//		} catch (CommandSyntaxException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	public Item getRandom() {

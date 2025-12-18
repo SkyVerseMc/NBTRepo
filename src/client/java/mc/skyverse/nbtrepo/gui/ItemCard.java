@@ -4,7 +4,11 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import mc.skyverse.nbtrepo.NBTRepoModClient;
+import mc.skyverse.nbtrepo.elements.ItemInfo;
 import mc.skyverse.nbtrepo.gui.screen.RepoScreen;
+import mc.skyverse.nbtrepo.util.resource.ItemUtil;
+import mc.skyverse.nbtrepo.util.resource.StringUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -21,17 +25,23 @@ public class ItemCard extends PressableWidget {
 	private RepoScreen screen;
 
 	private final ItemStack stack;
-	private final String title;
+	private final ItemInfo itemInfo;
+	
+	private final String[] titleLines;
+	private final String author;
+	
+	private int renderY;
 
-	int renderY;
-
-	public ItemCard(RepoScreen screen, ItemStack stack, String title) {
+	public ItemCard(RepoScreen screen, ItemInfo info) {
 
 		super(0, 0, 0, 0, Text.literal(""));
 
-		this.stack = stack;
-		this.title = title;
+		this.itemInfo = info;
+		this.stack = new ItemStack(ItemUtil.getById(info.getItem()));
 		this.screen = screen;
+		
+		titleLines = StringUtil.splitInLines(itemInfo.getName(), textRenderer, getWidth(), 2);
+		author = StringUtil.fit("§7by §r" + itemInfo.getAuthor(), textRenderer, getWidth());
 	}
 
 	public void init(int[] coordinates, int width, int height) {
@@ -64,33 +74,17 @@ public class ItemCard extends PressableWidget {
 		RenderHelper.drawDirtBackgroundWithBrightness(context, hovered ? 0.4F : 0.3F, getX() + 5, renderY + 5, getWidth() - 5 * 2, 60);
 
 		RenderHelper.drawItemWithScale(context, stack, getX() + 34, renderY + 28, 3);
-
-		context.drawCenteredTextWithShadow(textRenderer, getTitle(0), getX() + (int)(0.5 * getWidth()), renderY + 70, Color.WHITE.getRGB());
-		context.drawCenteredTextWithShadow(textRenderer, getTitle(1), getX() + (int)(0.5 * getWidth()), renderY + 70 + textRenderer.fontHeight + 2, Color.WHITE.getRGB());
-	}
-
-	private String getTitle(int line) {
-
-		if (textRenderer.getWidth(title) < getWidth()) return line < 1 ? title : "";
-
-		String[] words = title.split("[^a-zA-Z0-9§]");
-
-		if (words.length < 2) return line < 1 ? title : "";
-
-		String[] text = new String[] {"", ""};
-		int i = 0;
-		String last = "";
-
-		for (String s : words) {
-
-			if (s.contains("§")) last = "§" + s.charAt(s.lastIndexOf('§') + 1);
-			if (textRenderer.getWidth(text[i]) + textRenderer.getWidth(s + " ") > getWidth() - 10) i++;
-
-			if (i > 1) break;
-			text[i] += (i > 0 ? last : "") + s + " ";
-		}
-
-		return line > i ? "" : text[line];
+		
+		context.drawCenteredTextWithShadow(textRenderer, titleLines[0], getX() + (int)(0.5 * getWidth()), renderY + 70, Color.WHITE.getRGB());
+		context.drawCenteredTextWithShadow(textRenderer, titleLines[1], getX() + (int)(0.5 * getWidth()), renderY + 70 + 12, Color.WHITE.getRGB());
+		
+		context.drawTextWithShadow(textRenderer, (itemInfo.getVersion().isInRange(NBTRepoModClient.MC_VERSION) ? "§r" : "§c") + itemInfo.getVersion().get(), getX() + (int)(0.5 * getWidth()), renderY + 70 + 21, Color.WHITE.getRGB());
+		
+		context.drawTextWithShadow(textRenderer, "§7§l" + itemInfo.getDownloads(), getX() + 5, renderY + 75 + 31, Color.WHITE.getRGB());
+		
+		context.drawTextWithShadow(textRenderer, author, getX() + 5, renderY + 80 + 42, Color.WHITE.getRGB());
+		
+		context.drawCenteredTextWithShadow(textRenderer, "§7" + itemInfo.getDateString(), getX() + (int)(0.5 * getWidth()), renderY + 80 + 53, Color.WHITE.getRGB());
 	}
 
 	@Override

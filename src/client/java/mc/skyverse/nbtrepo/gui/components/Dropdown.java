@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import org.jetbrains.annotations.Nullable;
 
-import mc.skyverse.nbtrepo.util.ModResourceManager;
+import mc.skyverse.nbtrepo.util.resource.ModResourceManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.SharedConstants;
@@ -69,7 +69,7 @@ public class Dropdown extends TextFieldWidget {
 		Identifier identifier = TEXTURES.get(isNarratable(), isFocused());
 		context.drawGuiTexture(identifier, getX(), getY(), getWidth(), getHeight());
 		
-		context.drawTexture(ModResourceManager.EXPAND_BUTTON, getX() + getWidth() - 19, getY() + 1, 0, 0F, 0F, 18, 18, 20, 20);
+		context.drawTexture(ModResourceManager.EXPAND_BUTTON.toIdentifier(), getX() + getWidth() - 19, getY() + 1, 0, 0F, 0F, 18, 18, 20, 20);
 		
 		context.drawTextWithShadow(textRenderer, getSelectedOption(), getX() + 4, getY() + (getHeight() - 8) / 2, 0xE0E0E0);
 		
@@ -144,7 +144,7 @@ public class Dropdown extends TextFieldWidget {
 		case 235:
 		case 257:
 			if (chosen) {
-				chosen = true;
+				chosen = false;
 				return true;
 			}
 			saveParam();

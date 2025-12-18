@@ -2,22 +2,22 @@ package mc.skyverse.nbtrepo.elements;
 
 import java.util.Date;
 
-import net.minecraft.item.ItemStack;
-
 public class ItemInfo {
 
-	final String id, name, author;
+	final String id, name, item, comment, author;
 	final Version version;
 	final int downloads;
-	final long date;
+	final long timestamp;
 	
-	public ItemInfo(String id, ItemStack stack, String name, Version version, String author, int downloads, long date) {
+	public ItemInfo(String id, String item, String name, Version version, String comment, String author, int downloads, long timestamp) {
 		this.id = id;
 		this.name = name;
+		this.item = item;
 		this.version = version;
+		this.comment = comment;
 		this.author = author;
 		this.downloads = downloads;
-		this.date = date;
+		this.timestamp = timestamp;
 	}
 	
 	public String getId() {
@@ -26,6 +26,14 @@ public class ItemInfo {
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getItem() {
+		return item;
+	}
+	
+	public String getComment() {
+		return comment;
 	}
 
 	public String getAuthor() {
@@ -40,7 +48,13 @@ public class ItemInfo {
 		return downloads;
 	}
 
-	public long getDate() {
-		return date;
+	public long getDateLong() {
+		return timestamp;
+	}
+	
+	public String getDateString() {
+		
+		Date d = new Date(timestamp);
+		return (d.getYear() + 1900)+ "/" + (d.getMonth() + 1 < 10 ? "0" : "") + (d.getMonth() + 1) + "/" + (d.getDate() < 10 ? "0" : "") + d.getDate();
 	}
 }
